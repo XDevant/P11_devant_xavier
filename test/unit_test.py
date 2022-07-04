@@ -40,19 +40,19 @@ class TestBookingView:
             "numberOfPlaces": "25"
         }]
 
-    def test_login_happy(self, client, mocker):
+    def test_booking_happy(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
         response = client.get('/book/Spring Festival/Simply Lift')
         assert response.status_code == 200
 
-    def test_login_sad_competition(self, client, mocker):
+    def test_booking_sad_competition(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
         response = client.get('/book/SpringFestival/Simply Lift')
         assert response.status_code == 200
 
-    def test_login_sad_club(self, client, mocker):
+    def test_booking_sad_club(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
         response = client.get('/book/Spring Festival/SimplyLift')
@@ -60,4 +60,43 @@ class TestBookingView:
 
 
 class TestPurchaseView:
-    pass
+    clubs = [{
+        "name": "Simply Lift",
+        "email": "john@simplylift.co",
+        "points": "13"
+    }]
+    competitions = [{
+        "name": "Spring Festival",
+        "date": "2020-03-27 10:00:00",
+        "numberOfPlaces": "5"
+    }]
+
+    def test_purchase_happy(self, client, mocker):
+        data = {'competition': 'Spring Festival',
+                'club': 'Simply Lift',
+                'places': 4}
+        mocker.patch.object(server, 'clubs', self.clubs)
+        mocker.patch.object(server, 'competitions', self.competitions)
+        response = client.post('/purchasePlaces', data=data)
+        assert response.status_code == 200
+        assert self.competitions[0]['numberOfPlaces'] == 1
+
+    def test_purchase_sad_not_enough_places(self, client, mocker):
+        data = {'competition': 'Spring Festival',
+                'club': 'Simply Lift',
+                'places': 6}
+        mocker.patch.object(server, 'clubs', self.clubs)
+        mocker.patch.object(server, 'competitions', self.competitions)
+        response = client.post('/purchasePlaces', data=data)
+        assert response.status_code == 200
+        assert self.competitions[0]['numberOfPlaces'] >= 0
+
+    def test_purchase_sad_negative_purchase(self, client, mocker):
+        data = {'competition': 'Spring Festival',
+                'club': 'Simply Lift',
+                'places': -1}
+        mocker.patch.object(server, 'clubs', self.clubs)
+        mocker.patch.object(server, 'competitions', self.competitions)
+        response = client.post('/purchasePlaces', data=data)
+        assert response.status_code == 200
+        assert self.competitions[0]['numberOfPlaces'] == 1
