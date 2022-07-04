@@ -49,14 +49,14 @@ class TestBookingView:
     def test_login_sad_competition(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        response = client.get('/book/Spring Festival/SimplyLift')
+        response = client.get('/book/SpringFestival/Simply Lift')
         assert response.status_code == 200
 
     def test_login_sad_club(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        response = client.get('/book/SpringFestival/Simply Lift')
-        assert response.status_code == 200
+        response = client.get('/book/Spring Festival/SimplyLift')
+        assert response.status_code == 302
 
 
 class TestPurchaseView:
