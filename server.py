@@ -32,7 +32,7 @@ def show_summary():
     if len(club_list) > 0:
         return render_template('welcome.html', club=club_list[0], competitions=competitions)
     else:
-        return redirect('/index')
+        return redirect('/')
 
 
 @app.route('/book/<competition>/<club>')

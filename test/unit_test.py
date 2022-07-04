@@ -1,4 +1,3 @@
-from test.conftest import client
 import server
 
 
