@@ -14,12 +14,12 @@ class TestLandingView:
 class TestLoginView:
     clubs = [{
         "name": "Simply Lift",
-        "email": "john@simplylift.co",
+        "email": "foo@bar.co",
         "points": "13"
     }]
 
     def test_login_happy(self, client, mocker):
-        data = {'email': 'john@simplylift.co'}
+        data = {'email': 'foo@bar.co'}
         mocker.patch.object(server, 'clubs', self.clubs)
         response = client.post('/showSummary', data=data)
         assert response.status_code == 200
