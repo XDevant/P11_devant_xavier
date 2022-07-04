@@ -2,12 +2,17 @@ from test.conftest import client
 import server
 
 
-def test_index_status_code_ok(client):
-    response = client.get('/')
-    assert response.status_code == 200
+class TestLandingView:
+    def test_index_status_code_ok(self, client):
+        response = client.get('/')
+        assert response.status_code == 200
+
+    def test_logout_status_code_ok(self, client):
+        response = client.get('/logout')
+        assert response.status_code == 302
 
 
-class TestLoginViews:
+class TestLoginView:
     clubs = [{
         "name": "Simply Lift",
         "email": "john@simplylift.co",
