@@ -65,7 +65,7 @@ class TestBookingView:
 
 class TestPurchaseView:
     clubs = [{"name": "foo", "points": 0}]
-    competitions = [{"name": "bar", "numberOfPlaces": 0}]
+    competitions = [{"name": "bar", "numberOfPlaces": 0, "orders": {}}]
     order = {'competition': 'bar', 'club': 'foo', 'places': 0}
 
     def setup(self, method):

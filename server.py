@@ -19,6 +19,9 @@ app.secret_key = 'something_special'
 
 competitions = load_competitions()
 clubs = load_clubs()
+for comp in competitions:
+    if 'orders' not in comp.keys():
+        comp['orders'] = {}
 
 
 @app.route('/')
@@ -51,18 +54,28 @@ def book(competition, club):
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
+    club_name = request.form['club']
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    club = [c for c in clubs if c['name'] == club_name][0]
     places_required = int(request.form['places'])
     places_available = int(competition['numberOfPlaces'])
-    if places_available >= places_required >= 0:
-        competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
-        flash('Great-booking complete!')
-        return render_template('welcome.html', club=club, competitions=competitions)
+    already_ordered = 0
+    if club_name in competition['orders'].keys():
+        already_ordered = competition['orders'][club_name]
     if places_required < 0:
         flash(f'You can only book a positive number of places!')
-    else:
+    elif places_required + already_ordered > 12:
+        flash(f'You can not buy mora than 12 places!')
+    elif places_available < places_required:
         flash(f'Only {places_available} places left, you asked {places_required}!')
+    elif club["points"] < places_required:
+        flash(f'You have {club["points"]} points left, you asked {places_required} places!')
+    else:
+        competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
+        competition['orders'][club_name] = already_ordered + places_required
+        club["points"] = int(club["points"]) - places_required
+        flash(f'Great-booking complete! ({places_required} places)')
+        return render_template('welcome.html', club=club, competitions=competitions)
     return render_template('booking.html', club=club, competition=competition)
 
 
@@ -77,8 +90,6 @@ def logout():
 
 
 # TODO:
-"""Mises à jour des points non pris en comptes, reservation de places dans les concours précédents
-Les clubs ne devraient pas pouvoir réserver plus de 12 places par compétition
-Les clubs ne devraient pas pouvoir utiliser plus de points que ceux autorisés
+"""enregistrer les reservation de places dans les concours
 La saisie d'un courriel inconnu entraîne le blocage de l'application
 """
