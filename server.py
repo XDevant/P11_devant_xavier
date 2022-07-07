@@ -56,7 +56,7 @@ def purchase_places():
     places_required = int(request.form['places'])
     places_available = int(competition['numberOfPlaces'])
     if places_available >= places_required >= 0:
-        competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-places_required
+        competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
         flash('Great-booking complete!')
         return render_template('welcome.html', club=club, competitions=competitions)
     if places_required < 0:
@@ -67,6 +67,11 @@ def purchase_places():
 
 
 # TODO: Add route for points display
+"""Mises à jour des points non pris en comptes, reservation de places dans les concours précédents
+Les clubs ne devraient pas pouvoir réserver plus de 12 places par compétition
+Les clubs ne devraient pas pouvoir utiliser plus de points que ceux autorisés
+La saisie d'un courriel inconnu entraîne le blocage de l'application
+"""
 
 
 @app.route('/logout')

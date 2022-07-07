@@ -13,7 +13,7 @@ class TestLandingView:
 
 class TestLoginView:
     clubs = [{
-        "name": "Simply Lift",
+        "name": "FooBar",
         "email": "foo@bar.co",
         "points": "13"
     }]
