@@ -12,14 +12,15 @@ class TestDataBase:
         assert len(competition_list) > 0
 
     def test_update_clubs(self):
-        server.save_clubs("test")
+        server.save_clubs(server.clubs, "test")
         club_list = server.load_clubs("test")
         assert club_list == server.clubs
 
     def test_update_competitions(self):
-        server.save_competitions("test")
+        server.save_competitions(server.competitions, "test")
         competition_list = server.load_competitions("test")
         assert competition_list == server.competitions
+
 
 class TestLandingView:
     def test_index_status_code_ok(self, client):
