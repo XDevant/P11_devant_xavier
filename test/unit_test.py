@@ -104,3 +104,14 @@ class TestPurchaseView:
         response = client.post('/purchasePlaces', data=data)
         assert response.status_code == 200
         assert self.competitions[0]['numberOfPlaces'] == 1
+
+
+class TestRankingView:
+    clubs = [{"name": "Foo", "email": "foo@foo.co", "points": "13"},
+             {"name": "Bar", "email": "bar@bar.co", "points": "20"}
+             ]
+
+    def test_ranking_status_code_ok(self, client, mocker):
+        mocker.patch.object(server, 'clubs', self.clubs)
+        response = client.get('/ranking')
+        assert response.status_code == 200

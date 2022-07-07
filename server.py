@@ -66,14 +66,19 @@ def purchase_places():
     return render_template('booking.html', club=club, competition=competition)
 
 
-# TODO: Add route for points display
-"""Mises à jour des points non pris en comptes, reservation de places dans les concours précédents
-Les clubs ne devraient pas pouvoir réserver plus de 12 places par compétition
-Les clubs ne devraient pas pouvoir utiliser plus de points que ceux autorisés
-La saisie d'un courriel inconnu entraîne le blocage de l'application
-"""
+@app.route('/ranking')
+def ranking():
+    return render_template('ranking.html', clubs=clubs)
 
 
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
+
+
+# TODO:
+"""Mises à jour des points non pris en comptes, reservation de places dans les concours précédents
+Les clubs ne devraient pas pouvoir réserver plus de 12 places par compétition
+Les clubs ne devraient pas pouvoir utiliser plus de points que ceux autorisés
+La saisie d'un courriel inconnu entraîne le blocage de l'application
+"""
