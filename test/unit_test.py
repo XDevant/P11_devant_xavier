@@ -1,6 +1,26 @@
 import server
 import pytest
 
+
+class TestDataBase:
+    def test_load_clubs(self):
+        club_list = server.load_clubs()
+        assert len(club_list) > 0
+
+    def test_load_competitions(self):
+        competition_list = server.load_competitions()
+        assert len(competition_list) > 0
+
+    def test_update_clubs(self):
+        server.save_clubs("test")
+        club_list = server.load_clubs("test")
+        assert club_list == server.clubs
+
+    def test_update_competitions(self):
+        server.save_competitions("test")
+        competition_list = server.load_competitions("test")
+        assert competition_list == server.competitions
+
 class TestLandingView:
     def test_index_status_code_ok(self, client):
         response = client.get('/')
