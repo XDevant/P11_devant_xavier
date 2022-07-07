@@ -107,11 +107,14 @@ class TestPurchaseView:
 
 
 class TestRankingView:
-    clubs = [{"name": "Foo", "email": "foo@foo.co", "points": "13"},
+    clubs = [{"name": "Foo", "email": "foo@foo.co", "points": "3"},
              {"name": "Bar", "email": "bar@bar.co", "points": "20"}
              ]
 
     def test_ranking_status_code_ok(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         response = client.get('/ranking')
+        data = response.data.decode()
         assert response.status_code == 200
+        assert f"{self.clubs[0]['name']} Points: {self.clubs[0]['points']}" in data
+        assert f"{self.clubs[1]['name']} Points: {self.clubs[1]['points']}" in data
