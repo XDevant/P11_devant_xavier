@@ -89,7 +89,6 @@ class TestPurchaseView:
     clubs = [{"name": "foo", "points": 0}]
     competitions = [{"name": "bar", "numberOfPlaces": 0, "orders": {}}]
     order = {'competition': 'bar', 'club': 'foo', 'places': 0}
-    settings = {"clubs_filename": "test", "competitions_filename": "test"}
 
     def setup(self, method):
         if method == "test_purchase_sad_not_enough_places_or_points":
@@ -105,7 +104,8 @@ class TestPurchaseView:
         self.order["places"] = 8
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        mocker.patch.object(server, 'SETTINGS', self.settings)
+        mocker.patch('server.save_clubs', return_value=None)
+        mocker.patch('server.save_competitions', return_value=None)
         response = client.post('/purchasePlaces', data=self.order)
         assert response.status_code == 200
         assert self.competitions[0]['numberOfPlaces'] == 12
@@ -117,7 +117,8 @@ class TestPurchaseView:
         self.competitions[0]["numberOfPlaces"] = places
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        mocker.patch.object(server, 'SETTINGS', self.settings)
+        mocker.patch('server.save_clubs', return_value=None)
+        mocker.patch('server.save_competitions', return_value=None)
         response = client.post('/purchasePlaces', data=self.order)
         assert response.status_code == 200
         assert self.clubs[0]["points"] == points
@@ -128,7 +129,8 @@ class TestPurchaseView:
         self.order["places"] = amount
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        mocker.patch.object(server, 'SETTINGS', self.settings)
+        mocker.patch('server.save_clubs', return_value=None)
+        mocker.patch('server.save_competitions', return_value=None)
         response = client.post('/purchasePlaces', data=self.order)
         assert response.status_code == 200
         assert self.competitions[0]['numberOfPlaces'] == 20
