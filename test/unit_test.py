@@ -12,12 +12,12 @@ class TestDataBase:
         assert len(competition_list) > 0
 
     def test_update_clubs(self):
-        server.save_clubs(server.clubs, "test")
+        server.save_clubs(server.clubs, filename="test")
         club_list = server.load_clubs("test")
         assert club_list == server.clubs
 
     def test_update_competitions(self):
-        server.save_competitions(server.competitions, "test")
+        server.save_competitions(server.competitions, filename="test")
         competition_list = server.load_competitions("test")
         assert competition_list == server.competitions
 
@@ -55,32 +55,33 @@ class TestLoginView:
 
 class TestBookingView:
     clubs = [{
-        "name": "Simply Lift",
-        "email": "john@simplylift.co",
+        "name": "foo",
+        "email": "foo@sfoo.co",
         "points": "13"
     }]
     competitions = [{
-            "name": "Spring Festival",
-            "date": "2020-03-27 10:00:00",
-            "numberOfPlaces": "25"
+            "name": "bar",
+            "date": "?",
+            "numberOfPlaces": "25",
+            "orders": {}
         }]
 
     def test_booking_happy(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        response = client.get('/book/Spring Festival/Simply Lift')
+        response = client.get('/book/bar/foo')
         assert response.status_code == 200
 
     def test_booking_sad_competition(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        response = client.get('/book/SpringFestival/Simply Lift')
+        response = client.get('/book/bir/foo')
         assert response.status_code == 200
 
     def test_booking_sad_club(self, client, mocker):
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
-        response = client.get('/book/Spring Festival/SimplyLift')
+        response = client.get('/book/bar/foa')
         assert response.status_code == 302
 
 
@@ -88,6 +89,7 @@ class TestPurchaseView:
     clubs = [{"name": "foo", "points": 0}]
     competitions = [{"name": "bar", "numberOfPlaces": 0, "orders": {}}]
     order = {'competition': 'bar', 'club': 'foo', 'places': 0}
+    settings = {"clubs_filename": "test", "competitions_filename": "test"}
 
     def setup(self, method):
         if method == "test_purchase_sad_not_enough_places_or_points":
@@ -103,6 +105,7 @@ class TestPurchaseView:
         self.order["places"] = 8
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
+        mocker.patch.object(server, 'SETTINGS', self.settings)
         response = client.post('/purchasePlaces', data=self.order)
         assert response.status_code == 200
         assert self.competitions[0]['numberOfPlaces'] == 12
@@ -114,6 +117,7 @@ class TestPurchaseView:
         self.competitions[0]["numberOfPlaces"] = places
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
+        mocker.patch.object(server, 'SETTINGS', self.settings)
         response = client.post('/purchasePlaces', data=self.order)
         assert response.status_code == 200
         assert self.clubs[0]["points"] == points
@@ -124,6 +128,7 @@ class TestPurchaseView:
         self.order["places"] = amount
         mocker.patch.object(server, 'clubs', self.clubs)
         mocker.patch.object(server, 'competitions', self.competitions)
+        mocker.patch.object(server, 'SETTINGS', self.settings)
         response = client.post('/purchasePlaces', data=self.order)
         assert response.status_code == 200
         assert self.competitions[0]['numberOfPlaces'] == 20
