@@ -92,10 +92,10 @@ def purchase_places():
     if places_required < 0:
         flash(f'You can only book a positive number of places!')
     elif places_required + already_ordered > 12:
-        flash(f'You can not buy mora than 12 places!')
+        flash(f'You can not buy more than 12 places!')
     elif places_available < places_required:
         flash(f'Only {places_available} places left, you asked {places_required}!')
-    elif club["points"] < places_required:
+    elif int(club["points"]) < places_required:
         flash(f'You have {club["points"]} points left, you asked {places_required} places!')
     else:
         club["points"] = int(club["points"]) - places_required
