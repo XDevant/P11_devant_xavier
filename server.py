@@ -8,25 +8,29 @@ SETTINGS = {
 }
 
 
-def load_clubs(filename=SETTINGS["clubs_filename"]):
+def load_clubs():
+    filename = SETTINGS["clubs_filename"]
     with open(filename + '.json') as c:
         list_of_clubs = json.load(c)['clubs']
         return list_of_clubs
 
 
-def load_competitions(filename=SETTINGS["competitions_filename"]):
+def load_competitions():
+    filename = SETTINGS["competitions_filename"]
     with open(filename + '.json') as comps:
         list_of_competitions = json.load(comps)['competitions']
         return list_of_competitions
 
 
-def save_clubs(club_list, filename=SETTINGS["clubs_filename"]):
+def save_clubs(club_list):
+    filename = SETTINGS["clubs_filename"]
     with open(filename + '.json', 'w') as c:
         json.dump({'clubs': club_list}, c)
         return True
 
 
-def save_competitions(competition_list, filename=SETTINGS["competitions_filename"]):
+def save_competitions(competition_list):
+    filename = SETTINGS["competitions_filename"]
     with open(filename + '.json', 'w') as c:
         json.dump({'competitions': competition_list}, c)
         return True
@@ -37,6 +41,13 @@ def find_index_by_name(name, list_of_dicts):
         if list_of_dicts[i]['name'] == name:
             return i
     return -1
+
+
+def shutdown_server():
+    shutdown = request.environ.get('werkzeug.server.shutdown')
+    if shutdown is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    shutdown()
 
 
 app = Flask(__name__)
@@ -60,7 +71,12 @@ def show_summary():
     if len(club_list) > 0:
         return render_template('welcome.html', club=club_list[0], competitions=competitions)
     else:
-        return redirect('/')
+        try:
+            shutdown_server()
+        except RuntimeError:
+            if not app.testing:
+                raise RuntimeError("Server did not shut down")
+        return '<h1>Server shutting down...</h1>'
 
 
 @app.route('/book/<competition>/<club>')

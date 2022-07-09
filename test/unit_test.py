@@ -12,13 +12,13 @@ class TestDataBase:
         assert len(competition_list) > 0
 
     def test_update_clubs(self):
-        server.save_clubs(server.clubs, filename="test")
-        club_list = server.load_clubs("test")
+        server.save_clubs(server.clubs)
+        club_list = server.load_clubs()
         assert club_list == server.clubs
 
     def test_update_competitions(self):
-        server.save_competitions(server.competitions, filename="test")
-        competition_list = server.load_competitions("test")
+        server.save_competitions(server.competitions)
+        competition_list = server.load_competitions()
         assert competition_list == server.competitions
 
 
@@ -50,7 +50,7 @@ class TestLoginView:
         data = {'email': 'j@s.co'}
         mocker.patch.object(server, 'clubs', self.clubs)
         response = client.post('/showSummary', data=data)
-        assert response.status_code == 302
+        assert response.data.decode() == "<h1>Server shutting down...</h1>"
 
 
 class TestBookingView:
