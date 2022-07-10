@@ -52,17 +52,16 @@ def shutdown_server():
     shutdown()
 
 
-def get_booking(competition, club, table):
-    if competition not in table.keys() or club not in table[competition].keys():
+def get_booking(competition, club, db):
+    if competition not in db["bookings"].keys() or club not in db["bookings"][competition].keys():
         return 0
-    return int(table[competition][club])
+    return int(db["bookings"][competition][club])
 
 
-def set_booking(competition, club, places, table):
-    if competition not in table.keys():
-        table[competition] = {}
-    else:
-        table[competition][club] = str(places)
+def set_booking(competition, club, places, db):
+    if competition not in db["bookings"].keys():
+        db["bookings"][competition] = {}
+    db["bookings"][competition][club] = str(places)
 
 
 app = Flask(__name__)
@@ -115,7 +114,7 @@ def purchase_places():
     competition = data["competitions"][competition_id]
     places_required = int(request.form['places'])
     places_available = int(competition['numberOfPlaces'])
-    already_ordered = get_booking(competition_name, club_name, data["bookings"])
+    already_ordered = get_booking(competition_name, club_name, data)
 
     if places_required < 0:
         flash(f'You can only book a positive number of places!')
@@ -130,7 +129,7 @@ def purchase_places():
         data["clubs"][club_id] = club
         competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
         data["competitions"][competition_id] = competition
-        set_booking(competition_name, club_name, already_ordered + places_required, data["bookings"])
+        set_booking(competition_name, club_name, already_ordered + places_required, data)
         save_data(data)
         flash(f'Great-booking complete! ({places_required} places)')
         return render_template('welcome.html', club=club, competitions=data["competitions"])
