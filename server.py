@@ -3,37 +3,39 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 
 
 SETTINGS = {
-    "clubs_filename": "clubs",
-    "competitions_filename": "competitions"
+    "tables": {
+              "clubs": "clubs",
+              "competitions": "competitions",
+              "bookings": "bookings"
+              },
+    "path": "./JSON/"
 }
 
 
-def load_clubs():
-    filename = SETTINGS["clubs_filename"]
-    with open(filename + '.json') as c:
-        list_of_clubs = json.load(c)['clubs']
-        return list_of_clubs
+def load_file(filename):
+    path = SETTINGS['path']
+    with open(path + filename + '.json') as c:
+        new_list = json.load(c)[filename]
+        return new_list
 
 
-def load_competitions():
-    filename = SETTINGS["competitions_filename"]
-    with open(filename + '.json') as comps:
-        list_of_competitions = json.load(comps)['competitions']
-        return list_of_competitions
+def load_data():
+    db = {}
+    for key, value in SETTINGS["tables"].items():
+        db[key] = load_file(value)
+    return db
 
 
-def save_clubs(club_list):
-    filename = SETTINGS["clubs_filename"]
-    with open(filename + '.json', 'w') as c:
-        json.dump({'clubs': club_list}, c)
+def save_to_file(name, table):
+    path = SETTINGS['path']
+    with open(path + name + '.json', 'w') as c:
+        json.dump({name: table}, c)
         return True
 
 
-def save_competitions(competition_list):
-    filename = SETTINGS["competitions_filename"]
-    with open(filename + '.json', 'w') as c:
-        json.dump({'competitions': competition_list}, c)
-        return True
+def save_data(db):
+    for key, value in db.items():
+        save_to_file(SETTINGS["tables"][key], value)
 
 
 def find_index_by_name(name, list_of_dicts):
@@ -50,14 +52,23 @@ def shutdown_server():
     shutdown()
 
 
+def get_booking(competition, club, table):
+    if competition not in table.keys() or club not in table[competition].keys():
+        return 0
+    return int(table[competition][club])
+
+
+def set_booking(competition, club, places, table):
+    if competition not in table.keys():
+        table[competition] = {}
+    else:
+        table[competition][club] = str(places)
+
+
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
-competitions = load_competitions()
-clubs = load_clubs()
-for comp in competitions:
-    if 'orders' not in comp.keys():
-        comp['orders'] = {}
+data = load_data()
 
 
 @app.route('/')
@@ -67,9 +78,9 @@ def index():
 
 @app.route('/showSummary', methods=['POST'])
 def show_summary():
-    club_list = [club for club in clubs if club['email'] == request.form['email']]
+    club_list = [club for club in data["clubs"] if club['email'] == request.form['email']]
     if len(club_list) > 0:
-        return render_template('welcome.html', club=club_list[0], competitions=competitions)
+        return render_template('welcome.html', club=club_list[0], competitions=data["competitions"])
     else:
         try:
             shutdown_server()
@@ -81,31 +92,31 @@ def show_summary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    club_id = find_index_by_name(club, clubs)
+    club_id = find_index_by_name(club, data["clubs"])
     if club_id == -1:
         flash("Something went wrong-please log again")
         return redirect('/index')
-    club = clubs[club_id]
-    competition_id = find_index_by_name(competition, competitions)
+    club = data["clubs"][club_id]
+    competition_id = find_index_by_name(competition, data["competitions"])
     if competition_id == -1:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
-    competition = competitions[competition_id]
+        return render_template('welcome.html', club=club, competitions=data["competitions"])
+    competition = data["competitions"][competition_id]
     return render_template('booking.html', club=club, competition=competition)
 
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
-    club_id = find_index_by_name(request.form['club'], clubs)
-    club = clubs[club_id]
-    competition_id = find_index_by_name(request.form['competition'], competitions)
-    competition = competitions[competition_id]
+    club_name = request.form['club']
+    competition_name = request.form['competition']
+    club_id = find_index_by_name(club_name, data["clubs"])
+    club = data["clubs"][club_id]
+    competition_id = find_index_by_name(competition_name, data["competitions"])
+    competition = data["competitions"][competition_id]
     places_required = int(request.form['places'])
     places_available = int(competition['numberOfPlaces'])
-    already_ordered = 0
+    already_ordered = get_booking(competition_name, club_name, data["bookings"])
 
-    if club["name"] in competition['orders'].keys():
-        already_ordered = competition['orders'][club["name"]]
     if places_required < 0:
         flash(f'You can only book a positive number of places!')
     elif places_required + already_ordered > 12:
@@ -116,28 +127,21 @@ def purchase_places():
         flash(f'You have {club["points"]} points left, you asked {places_required} places!')
     else:
         club["points"] = int(club["points"]) - places_required
-        clubs[club_id] = club
+        data["clubs"][club_id] = club
         competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
-        competition['orders'][club["name"]] = already_ordered + places_required
-        competitions[competition_id] = competition
-        save_clubs(clubs)
-        save_competitions(competitions)
+        data["competitions"][competition_id] = competition
+        set_booking(competition_name, club_name, already_ordered + places_required, data["bookings"])
+        save_data(data)
         flash(f'Great-booking complete! ({places_required} places)')
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=data["competitions"])
     return render_template('booking.html', club=club, competition=competition)
 
 
 @app.route('/ranking')
 def ranking():
-    return render_template('ranking.html', clubs=clubs)
+    return render_template('ranking.html', clubs=data["clubs"])
 
 
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
-
-
-# TODO:
-"""
-Invalid email blocks the app
-"""
