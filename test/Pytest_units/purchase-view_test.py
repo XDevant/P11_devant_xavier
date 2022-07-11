@@ -1,9 +1,8 @@
-from copy import deepcopy
-
 import pytest
-from test.data import db as data
-import server
 from copy import deepcopy
+from test.data import db as data
+from test.mocks import mock_index_return
+import server
 
 
 @pytest.fixture
@@ -22,6 +21,7 @@ class TestPurchaseView:
     def test_purchase_happy(self, client, mocker, db, form):
         mocker.patch.object(server, 'data', db)
         mocker.patch('server.save_data')
+        mocker.patch('server.find_index_by_key_value', mock_index_return)
         mocker.patch('server.get_booking', return_value=0)
         mocker.patch('server.set_booking')
         response = client.post('/purchasePlaces', data=form)
@@ -35,6 +35,7 @@ class TestPurchaseView:
         db["competitions"][0]["numberOfPlaces"] = str(places)
         mocker.patch.object(server, 'data', db)
         mocker.patch('server.save_data')
+        mocker.patch('server.find_index_by_key_value', mock_index_return)
         mocker.patch('server.get_booking', return_value=0)
         mocker.patch('server.set_booking')
         response = client.post('/purchasePlaces', data=form)
@@ -47,6 +48,7 @@ class TestPurchaseView:
         form["places"] = str(amount)
         mocker.patch.object(server, 'data', db)
         mocker.patch('server.save_data')
+        mocker.patch('server.find_index_by_key_value', mock_index_return)
         mocker.patch('server.get_booking', return_value=0)
         mocker.patch('server.set_booking')
         response = client.post('/purchasePlaces', data=form)
@@ -57,6 +59,7 @@ class TestPurchaseView:
     def test_purchase_sad_previous_too_high(self, client, mocker, db, form):
         mocker.patch.object(server, 'data', db)
         mocker.patch('server.save_data')
+        mocker.patch('server.find_index_by_key_value', mock_index_return)
         mocker.patch('server.get_booking', return_value=8)
         mocker.patch('server.set_booking')
         response = client.post('/purchasePlaces', data=form)

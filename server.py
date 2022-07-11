@@ -38,9 +38,9 @@ def save_data(db):
         save_to_file(SETTINGS["tables"][key], value)
 
 
-def find_index_by_name(name, list_of_dicts):
+def find_index_by_key_value(key, name, list_of_dicts):
     for i in range(len(list_of_dicts)):
-        if list_of_dicts[i]['name'] == name:
+        if list_of_dicts[i][key] == name:
             return i
     return -1
 
@@ -77,9 +77,9 @@ def index():
 
 @app.route('/showSummary', methods=['POST'])
 def show_summary():
-    club_list = [club for club in data["clubs"] if club['email'] == request.form['email']]
-    if len(club_list) > 0:
-        return render_template('welcome.html', club=club_list[0], competitions=data["competitions"])
+    club_id = find_index_by_key_value("email", request.form['email'], data["clubs"])
+    if club_id >= 0:
+        return render_template('welcome.html', club=data["clubs"][club_id], competitions=data["competitions"])
     else:
         try:
             shutdown_server()
@@ -91,12 +91,12 @@ def show_summary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    club_id = find_index_by_name(club, data["clubs"])
+    club_id = find_index_by_key_value("name", club, data["clubs"])
     if club_id == -1:
         flash("Something went wrong-please log again")
         return redirect('/index')
     club = data["clubs"][club_id]
-    competition_id = find_index_by_name(competition, data["competitions"])
+    competition_id = find_index_by_key_value("name", competition, data["competitions"])
     if competition_id == -1:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=data["competitions"])
@@ -108,9 +108,9 @@ def book(competition, club):
 def purchase_places():
     club_name = request.form['club']
     competition_name = request.form['competition']
-    club_id = find_index_by_name(club_name, data["clubs"])
+    club_id = find_index_by_key_value("name", club_name, data["clubs"])
     club = data["clubs"][club_id]
-    competition_id = find_index_by_name(competition_name, data["competitions"])
+    competition_id = find_index_by_key_value("name", competition_name, data["competitions"])
     competition = data["competitions"][competition_id]
     places_required = int(request.form['places'])
     places_available = int(competition['numberOfPlaces'])

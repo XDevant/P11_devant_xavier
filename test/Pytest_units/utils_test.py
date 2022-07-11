@@ -32,3 +32,15 @@ class TestGetSetBooking:
         mocker.patch.object(server, 'data', db)
         server.set_booking("bar", "foo", 6, db)
         assert int(server.data["bookings"]["bar"]["foo"]) == 6
+
+
+class TestFindIndexByKeyValue:
+    def test_find_existing_key(self, mocker, db):
+        mocker.patch.object(server, 'data', db)
+        index = server.find_index_by_key_value("name", "fuu", db["clubs"])
+        assert index == 1
+
+    def test_return_negative_index_on_missing_key(self, mocker, db):
+        mocker.patch.object(server, 'data', db)
+        index = server.find_index_by_key_value("name", "fizz", db["clubs"])
+        assert index == -1
