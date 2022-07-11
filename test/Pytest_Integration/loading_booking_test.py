@@ -18,6 +18,7 @@ class TestBookingJson:
         mocker.patch.object(server, 'data', new_db)
         response = client.get('/book/bar/foo')
         assert response.status_code == 200
+        assert "<h2>bar</h2>" in response.data.decode()
 
     def test_booking_sad_competition(self, client, mocker, monkeypatch, db, tmp_path):
         monkeypatch.setitem(server.SETTINGS, "path", str(tmp_path) + "/")
@@ -26,6 +27,7 @@ class TestBookingJson:
         mocker.patch.object(server, 'data', new_db)
         response = client.get('/book/bam/foo')
         assert response.status_code == 200
+        assert "<h2>Welcome, foo@foo.co" in response.data.decode()
 
     def test_booking_sad_club(self, client, mocker, monkeypatch, db, tmp_path):
         monkeypatch.setitem(server.SETTINGS, "path", str(tmp_path) + "/")
@@ -34,3 +36,4 @@ class TestBookingJson:
         mocker.patch.object(server, 'data', new_db)
         response = client.get('/book/bar/fizz')
         assert response.status_code == 302
+        assert 'redirected automatically to target URL: <a href="/index">/index</a>' in response.data.decode()

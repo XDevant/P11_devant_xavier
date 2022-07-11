@@ -10,7 +10,7 @@ def db():
     return db
 
 
-class TestLoginView:
+class TestHomeView:
 
     def test_login_happy(self, client, mocker, db):
         form = {'email': 'foo@foo.co'}
