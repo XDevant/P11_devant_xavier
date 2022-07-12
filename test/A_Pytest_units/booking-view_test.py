@@ -1,4 +1,5 @@
 import pytest
+from copy import deepcopy
 from test.data import db as data
 from test.mocks import mock_index_return
 import server
@@ -6,7 +7,7 @@ import server
 
 @pytest.fixture
 def db():
-    db = data
+    db = deepcopy(data)
     return db
 
 

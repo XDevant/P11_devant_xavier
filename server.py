@@ -66,6 +66,7 @@ def set_booking(competition, club, places, db):
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
+app.config.update(debug=True)
 
 data = load_data()
 

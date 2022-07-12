@@ -11,7 +11,7 @@ def db():
     return db
 
 
-class TestBookingFileSystemn:
+class TestBookingFileSystem:
     """Test json file loading and booking view"""
     def test_booking_happy(self, client, mocker, monkeypatch, db, tmp_path):
         monkeypatch.setitem(server.SETTINGS, "path", str(tmp_path) + "/")
