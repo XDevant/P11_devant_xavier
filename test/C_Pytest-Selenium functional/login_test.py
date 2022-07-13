@@ -4,6 +4,13 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.by import By
 import pytest
 from time import sleep
+from flask import url_for
+
+
+@pytest.fixture(scope="session")
+def app():
+    app, d = create_app(config_class=TestConfig)
+    return app
 
 
 @pytest.fixture(scope="module", params=["chrome", "firefox"])
@@ -30,10 +37,10 @@ def selenium(request):
     service.stop()
 
 
+@pytest.mark.usefixtures('live_server')
 class TestLogin:
     def test_login_page(self, selenium):
-        selenium.get('http://localhost:5000/')
-        assert selenium.current_url == 'http://localhost:5000/'
+        selenium.get(url_for('/'))
         assert selenium.title == "GUDLFT Registration"
         form_input = selenium.find_element(By.CSS_SELECTOR, 'input[type="email"]')
         form_input.clear()
@@ -41,4 +48,4 @@ class TestLogin:
         sleep(2)
         form_input.submit()
         sleep(2)
-        assert selenium.current_url == 'http://localhost:5000/showSummary'
+        assert selenium.current_url == 'http://localhost:8000/showSummary'

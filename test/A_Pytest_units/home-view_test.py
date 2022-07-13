@@ -1,6 +1,6 @@
 import pytest
 from test.data import db as data
-import server
+from gudlft import views
 from copy import deepcopy
 
 

@@ -1,7 +1,7 @@
 import pytest
 from copy import deepcopy
 from test.data import db as data
-import server
+import gudlft as server
 
 
 @pytest.fixture

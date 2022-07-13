@@ -1,83 +1,18 @@
-import json
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import render_template, request, redirect, flash, url_for, current_app, Blueprint
+from gudlft.utils import save_data, shutdown_server, find_index_by_key_value, get_booking, set_booking
 
 
-SETTINGS = {
-    "tables": {
-              "clubs": "clubs",
-              "competitions": "competitions",
-              "bookings": "bookings"
-              },
-    "path": "./JSON/"
-}
+bp = Blueprint('gudlft', __name__, url_prefix='')
 
 
-def load_file(filename):
-    path = SETTINGS['path']
-    with open(path + filename + '.json') as c:
-        new_list = json.load(c)[filename]
-        return new_list
-
-
-def load_data():
-    db = {}
-    for key, value in SETTINGS["tables"].items():
-        db[key] = load_file(value)
-    return db
-
-
-def save_to_file(name, table):
-    path = SETTINGS['path']
-    with open(path + name + '.json', 'w') as c:
-        json.dump({name: table}, c)
-        return True
-
-
-def save_data(db):
-    for key, value in db.items():
-        save_to_file(SETTINGS["tables"][key], value)
-
-
-def find_index_by_key_value(key, name, list_of_dicts):
-    for i in range(len(list_of_dicts)):
-        if list_of_dicts[i][key] == name:
-            return i
-    return -1
-
-
-def shutdown_server():
-    shutdown = request.environ.get('werkzeug.server.shutdown')
-    if shutdown is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    shutdown()
-
-
-def get_booking(competition, club, db):
-    if competition not in db["bookings"].keys() or club not in db["bookings"][competition].keys():
-        return 0
-    return int(db["bookings"][competition][club])
-
-
-def set_booking(competition, club, places, db):
-    if competition not in db["bookings"].keys():
-        db["bookings"][competition] = {}
-    db["bookings"][competition][club] = str(places)
-
-
-app = Flask(__name__)
-app.secret_key = 'something_special'
-app.config.update(debug=True)
-
-data = load_data()
-
-
-@app.route('/')
+@bp.route('/')
 def index():
     return render_template('index.html')
 
 
-@app.route('/showSummary', methods=['POST'])
+@bp.route('/showSummary', methods=['POST'])
 def show_summary():
+    data = current_app.config['DB']
     club_id = find_index_by_key_value("email", request.form['email'], data["clubs"])
     if club_id >= 0:
         return render_template('welcome.html', club=data["clubs"][club_id], competitions=data["competitions"])
@@ -85,13 +20,14 @@ def show_summary():
         try:
             shutdown_server()
         except RuntimeError:
-            if not app.testing:
+            if not current_app.testing:
                 raise RuntimeError("Server did not shut down")
         return '<h1>Server shutting down...</h1>'
 
 
-@app.route('/book/<competition>/<club>')
+@bp.route('/book/<competition>/<club>')
 def book(competition, club):
+    data = current_app.config['DB']
     club_id = find_index_by_key_value("name", club, data["clubs"])
     if club_id == -1:
         flash("Something went wrong-please log again")
@@ -105,8 +41,9 @@ def book(competition, club):
     return render_template('booking.html', club=club, competition=competition)
 
 
-@app.route('/purchasePlaces', methods=['POST'])
+@bp.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
+    data = current_app.config['DB']
     club_name = request.form['club']
     competition_name = request.form['competition']
     club_id = find_index_by_key_value("name", club_name, data["clubs"])
@@ -137,11 +74,12 @@ def purchase_places():
     return render_template('booking.html', club=club, competition=competition)
 
 
-@app.route('/ranking')
+@bp.route('/ranking')
 def ranking():
+    data = current_app.config['DB']
     return render_template('ranking.html', clubs=data["clubs"])
 
 
-@app.route('/logout')
+@bp.route('/logout')
 def logout():
-    return redirect(url_for('index'))
+    return redirect(url_for('gudlft.index'))
