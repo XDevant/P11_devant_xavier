@@ -1,19 +1,10 @@
-import pytest
-from test.data import db as data
-from gudlft import views
-
-
-@pytest.fixture
-def db():
-    db = data
-    return db
+from test.data import db as test_data
 
 
 class TestRankingView:
-    def test_ranking_status_code_ok(self, client, mocker, db):
-        mocker.patch.object(server, 'data', db)
+    def test_ranking_status_code_ok(self, client):
         response = client.get('/ranking')
-        new_db = response.data.decode()
+        content = response.data.decode()
         assert response.status_code == 200
-        assert f'{db["clubs"][0]["name"]} Points: {db["clubs"][0]["points"]}' in new_db
-        assert f'{db["clubs"][1]["name"]} Points: {db["clubs"][1]["points"]}' in new_db
+        assert f'{test_data["clubs"][0]["name"]} Points: {test_data["clubs"][0]["points"]}' in content
+        assert f'{test_data["clubs"][1]["name"]} Points: {test_data["clubs"][1]["points"]}' in content

@@ -5,12 +5,23 @@ from selenium.webdriver.common.by import By
 import pytest
 from time import sleep
 from flask import url_for
+from gudlft import create_app
+from test.conftest import TestConfig
+from pytest_flask.live_server import LiveServer
+from urllib.request import urlopen
 
 
 @pytest.fixture(scope="session")
 def app():
-    app, d = create_app(config_class=TestConfig)
-    return app
+    app = create_app(config_class=TestConfig)
+    yield app
+
+
+@pytest.fixture(scope="session")
+def live_server(app):
+    live_server = LiveServer(app, 'localhost', 8000, 6)
+    live_server.start()
+    yield live_server
 
 
 @pytest.fixture(scope="module", params=["chrome", "firefox"])
@@ -37,8 +48,11 @@ def selenium(request):
     service.stop()
 
 
-@pytest.mark.usefixtures('live_server')
 class TestLogin:
+    def test_live_server(self, live_server, selenium):
+        selenium.get(url_for('/'))
+        assert selenium.title == "GUDLFT Registration"
+
     def test_login_page(self, selenium):
         selenium.get(url_for('/'))
         assert selenium.title == "GUDLFT Registration"

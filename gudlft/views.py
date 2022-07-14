@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, flash, url_for, current_app, Blueprint
-from gudlft.utils import save_data, shutdown_server, find_index_by_key_value, get_booking, set_booking
+from gudlft.utils import shutdown_server, find_index_by_key_value, get_booking, set_booking
+from gudlft.filesystem import save_data
 
 
 bp = Blueprint('gudlft', __name__, url_prefix='')
@@ -20,8 +21,7 @@ def show_summary():
         try:
             shutdown_server()
         except RuntimeError:
-            if not current_app.testing:
-                raise RuntimeError("Server did not shut down")
+            raise RuntimeError("Server did not shut down")
         return '<h1>Server shutting down...</h1>'
 
 

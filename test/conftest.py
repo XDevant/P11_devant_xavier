@@ -1,19 +1,22 @@
 import pytest
 from flask import Config
 from gudlft import create_app
+from test.data import db
 
 
 class TestConfig(Config):
     SECRET_KEY = 'top-secret-key'
     JSONIFY_PRETTYPRINT_REGULAR = True
-    DATABASE = "./test/Temp/"
     TESTING = True
+    DATABASE = "./test/JSON/"
+    TEMP = "./test/Temp/"
+    DB = db
     LIVESERVER_PORT = '8000'
 
 
 @pytest.fixture()
 def app():
-    app, d = create_app(config_class=TestConfig)
+    app = create_app(config_class=TestConfig)
     return app
 
 
