@@ -10,7 +10,7 @@ class TestBookingView:
         assert response.status_code == 200
         assert "<h2>bar</h2>" in response.data.decode()
 
-    def test_booking_sad_competition(self, client, mocker, db):
+    def test_booking_sad_competition(self, client, mocker):
         mocker.patch('gudlft.utils.find_index_by_key_value', mock_index_return)
         response = client.get('/book/bir/foo')
         assert response.status_code == 200

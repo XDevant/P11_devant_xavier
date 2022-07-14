@@ -11,10 +11,10 @@ class TestConfig(Config):
     DATABASE = "./test/JSON/"
     TEMP = "./test/Temp/"
     DB = db
-    LIVESERVER_PORT = '8000'
+    LIVESERVER_PORT = '8001'
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
     app = create_app(config_class=TestConfig)
     return app
