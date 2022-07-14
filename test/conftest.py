@@ -23,5 +23,6 @@ def app():
 @pytest.fixture
 def client(app):
     """client app"""
+    app.config['DB'] = db
     with app.test_client() as client:
         yield client

@@ -37,8 +37,8 @@ class TestLogin:
         selenium.get('http://127.0.0.1:8000/')
         assert selenium.title == "GUDLFT Registration"
 
-    def test_login_page(self, selenium):
-        selenium.get(url_for('/'))
+    def test_login_page(self, app, selenium):
+        selenium.get('http://localhost:8000')
         assert selenium.title == "GUDLFT Registration"
         form_input = selenium.find_element(By.CSS_SELECTOR, 'input[type="email"]')
         form_input.clear()

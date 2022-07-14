@@ -1,7 +1,1 @@
-{
-    "bookings": {
-        "bar": {
-            "foo": "8"
-        }
-    }
-}
+{"bookings": {"Spring Festival": {"Simply Lift": "3"}, "Fall Classic": {}}}
