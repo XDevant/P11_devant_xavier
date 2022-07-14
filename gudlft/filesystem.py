@@ -13,7 +13,7 @@ SETTINGS = {
 
 def load_file(filename, path=None):
     if path is None:
-        path = current_app.config['DATABASE']
+        path = current_app.config['DATABASE'] + '/'
     else:
         path = path
     with open(path + filename + '.json') as c:
@@ -29,7 +29,7 @@ def load_data(path=None):
 
 
 def save_to_file(name, table):
-    path = current_app.config['DATABASE']
+    path = current_app.config['DATABASE'] + '/'
     with open(path + name + '.json', 'w') as c:
         json.dump({name: table}, c, indent=4)
         return True

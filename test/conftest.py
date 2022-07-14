@@ -1,5 +1,6 @@
 import pytest
 from flask import Config
+from copy import deepcopy
 from gudlft import create_app
 from test.data import db
 
@@ -10,19 +11,19 @@ class TestConfig(Config):
     TESTING = True
     DATABASE = "./test/JSON/"
     TEMP = "./test/Temp/"
-    DB = db
-    LIVESERVER_PORT = '8001'
+    DB = deepcopy(db)
+    SERVER_PORT = '8001'
 
 
-@pytest.fixture
+@pytest.fixture()
 def app():
     app = create_app(config_class=TestConfig)
     return app
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def client(app):
     """client app"""
-    app.config['DB'] = db
+    app.config.update({'DB': deepcopy(db)})
     with app.test_client() as client:
         yield client

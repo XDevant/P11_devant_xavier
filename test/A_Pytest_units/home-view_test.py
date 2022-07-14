@@ -25,6 +25,6 @@ class TestHomeView:
         form = {'email': 'foo@bar.co'}
         mocker.patch('gudlft.utils.shutdown_server')
         mocker.patch('gudlft.utils.find_index_by_key_value', return_value=-1)
-        response = client.post('/showSummary', data=form)
-        assert response.data.decode() == "<h1>Server shutting down...</h1>"
-        assert gudlft.utils.shutdown_server.call_count == 1
+        with pytest.raises(RuntimeError):
+            response = client.post('/showSummary', data=form)
+            assert response.status_code == 500

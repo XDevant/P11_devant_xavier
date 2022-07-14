@@ -63,9 +63,11 @@ class TestPurchaseView:
         mocker.patch('gudlft.utils.find_index_by_key_value', mock_index_return)
         mocker.patch('gudlft.utils.get_booking', return_value=8)
         mocker.patch('gudlft.utils.set_booking')
-        response = client.post('/purchasePlaces', data=form)
         with app.app_context():
             db = current_app.config['DB']
-        assert response.status_code == 200
+        db["bookings"][form["competition"]] = {form["club"]: form["places"]}
         assert int(db["competitions"][0]['numberOfPlaces']) == 20
+        response = client.post('/purchasePlaces', data=form)
+        assert response.status_code == 200
         assert int(db["clubs"][0]["points"]) == 13
+        assert int(db["competitions"][0]['numberOfPlaces']) == 20
