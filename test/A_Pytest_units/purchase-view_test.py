@@ -19,15 +19,17 @@ def form():
 
 
 class TestPurchaseView:
-    def test_purchase_happy(self, client, mocker, form):
+    def test_purchase_happy(self, app, client, mocker, form):
         mocker.patch('gudlft.filesystem.save_data')
         mocker.patch('gudlft.utils.find_index_by_key_value', mock_index_return)
         mocker.patch('gudlft.utils.get_booking', return_value=0)
         mocker.patch('gudlft.utils.set_booking')
+        with app.app_context():
+            db = current_app.config['DB']
         response = client.post('/purchasePlaces', data=form)
         assert response.status_code == 200
-        # assert int(db["competitions"][0]['numberOfPlaces']) == 12
-        # assert int(db["clubs"][0]["points"]) == 5
+        assert int(db["competitions"][0]['numberOfPlaces']) == 12
+        assert int(db["clubs"][0]["points"]) == 5
 
     @pytest.mark.parametrize("points, places", [(7, 9), (9, 7)])
     def test_purchase_sad_not_enough(self, app, client, mocker, points, places, form):
