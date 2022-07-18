@@ -1,4 +1,6 @@
 from flask import Config
+from copy import deepcopy
+from test.data import db
 
 
 class BaseConfig(Config):
@@ -6,7 +8,7 @@ class BaseConfig(Config):
     JSONIFY_PRETTYPRINT_REGULAR = True
     DATABASE = "./gudlft/JSON/"
     TESTING = False
-    SERVER_PORT = '5000'
+    PORT = '5000'
 
 
 class TestConfig(Config):
@@ -15,4 +17,14 @@ class TestConfig(Config):
     DATABASE = "./test/JSON/"
     TEMP = "./test/Temp/"
     TESTING = True
-    SERVER_PORT = '8000'
+    PORT = '8000'
+
+
+class PytestConfig(Config):
+    SECRET_KEY = 'top-secret-key'
+    JSONIFY_PRETTYPRINT_REGULAR = True
+    TESTING = True
+    DATABASE = "./test/JSON/"
+    TEMP = "./test/Temp/"
+    DB = deepcopy(db)
+    PORT = '8001'

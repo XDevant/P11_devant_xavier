@@ -4,8 +4,6 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.by import By
 import pytest
 from time import sleep
-from flask import url_for
-from test.conftest import TestConfig
 
 
 @pytest.fixture(scope="module", params=["chrome", "firefox"])

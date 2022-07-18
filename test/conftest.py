@@ -3,21 +3,12 @@ from flask import Config
 from copy import deepcopy
 from gudlft import create_app
 from test.data import db
-
-
-class TestConfig(Config):
-    SECRET_KEY = 'top-secret-key'
-    JSONIFY_PRETTYPRINT_REGULAR = True
-    TESTING = True
-    DATABASE = "./test/JSON/"
-    TEMP = "./test/Temp/"
-    DB = deepcopy(db)
-    SERVER_PORT = '8001'
+from gudlft.config import PytestConfig
 
 
 @pytest.fixture()
 def app():
-    app = create_app(config_class=TestConfig)
+    app = create_app(config_class=PytestConfig)
     return app
 
 
