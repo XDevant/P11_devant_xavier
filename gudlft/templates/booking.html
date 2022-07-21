@@ -20,6 +20,7 @@
     {% endif %}
     {% endwith %}
     <p>Places available: {{competition['numberOfPlaces']}}</p>
+    <p>Points available: {{club['points']}}</p>
     <form action="/purchasePlaces" method="post">
         <input type="hidden" name="club" value="{{club['name']}}">
         <input type="hidden" name="competition" value="{{competition['name']}}">
