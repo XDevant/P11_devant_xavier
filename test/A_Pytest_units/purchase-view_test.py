@@ -7,12 +7,6 @@ import gudlft
 
 
 @pytest.fixture
-def db():
-    db = deepcopy(test_data)
-    return db
-
-
-@pytest.fixture
 def form():
     form = {"competition": "bar", "club": "foo", "places": "8"}
     return form

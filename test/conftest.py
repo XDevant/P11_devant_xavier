@@ -18,3 +18,9 @@ def client(app):
     app.config.update({'DB': deepcopy(db)})
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def form():
+    form = {"competition": "bar", "club": "foo", "places": "8", "email": "foo@foo.co"}
+    return form

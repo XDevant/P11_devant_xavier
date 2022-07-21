@@ -6,6 +6,10 @@
 </head>
 <body>
     <h2>{{competition['name']}}</h2>
+    <nav>
+        <a href="{{ url_for('gudlft.ranking') }}">Go to gudlft ranking page</a>
+        <a href="{{url_for('gudlft.logout')}}">Logout</a>
+    </nav>
     {% with messages = get_flashed_messages()%}
     {% if messages %}
         <ul>

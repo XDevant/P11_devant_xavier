@@ -6,7 +6,9 @@
 </head>
 <body>
     <h2>GUDLFT  rankings</h2>
-
+    <nav>
+        <a href="{{ url_for('gudlft.index') }}">Go back to loging page</a>
+    </nav>
     {% with messages = get_flashed_messages()%}
     {% if messages %}
         <ul>
