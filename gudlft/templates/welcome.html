@@ -5,7 +5,7 @@
     <title>Summary | GUDLFT Registration</title>
 </head>
 <body>
-    <h2>Welcome, {{club['email']}} </h2>
+    <h2>Welcome, {{club['email']}}</h2>
     <nav>
         <a href="{{ url_for('gudlft.ranking') }}">Go to gudlft ranking page</a>
         <a href="{{url_for('gudlft.logout')}}">Logout</a>
@@ -18,7 +18,7 @@
         {% endfor %}
        </ul>
     {% endif%}
-    Points available: {{club['points']}}
+    <p>Points available: {{club['points']}}</p>
     <h3>Competitions:</h3>
     <ul>
         {% for comp in competitions%}
