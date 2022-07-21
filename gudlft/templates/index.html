@@ -6,7 +6,10 @@
 </head>
 <body>
     <h1>Welcome to the GUDLFT Registration Portal!</h1>
-    Please enter your secretary email to continue:
+    <nav>
+        <a href="{{ url_for('gudlft.ranking') }}">Go to gudlft ranking page</a>
+    </nav>
+    <p>Please enter your secretary email to continue:</p>
     <form action="showSummary" method="post">
         <label for="email">Email:</label>
         <input type="email" name="email" id=""/>

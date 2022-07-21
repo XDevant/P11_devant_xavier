@@ -11,10 +11,6 @@ class ProjectPerfTest(HttpUser):
         self.client.post("/showSummary", {"email": "Iron Temple"})
 
     @task
-    def logout(self):
-        self.client.get("/logout")
-
-    @task
     def booking(self):
         self.client.get("/book/Fall Classic/She Lifts")
 
@@ -25,3 +21,7 @@ class ProjectPerfTest(HttpUser):
                 "places": "12",
                 "test": "True"}
         self.client.post("/purchasePlaces", form)
+
+    @task
+    def ranking(self):
+        self.client.get("/ranking")

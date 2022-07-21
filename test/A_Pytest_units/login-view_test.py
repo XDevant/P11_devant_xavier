@@ -12,9 +12,3 @@ class TestLoginView:
         html = response.data.decode()
         assert '<input type="email"' in html
         assert '<button type="submit"' in html
-
-    def test_login_has_nav(self, client):
-        response = client.get('/')
-        html = response.data.decode()
-        assert "<nav>" in html
-        assert "</a>" in html
