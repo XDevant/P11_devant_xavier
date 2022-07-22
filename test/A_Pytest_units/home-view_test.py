@@ -1,4 +1,5 @@
 import pytest
+from flask import session
 from test.data import db as data
 import gudlft
 
@@ -22,3 +23,10 @@ class TestHomeView:
         with pytest.raises(RuntimeError):
             response = client.post('/showSummary', data=form)
             assert response.status_code == 500
+
+    def test_back_home(self, client, mocker):
+        form = {'name': data["clubs"][0]["name"]}
+        mocker.patch('gudlft.utils.shutdown_server')
+        mocker.patch('gudlft.utils.find_index_by_key_value', return_value=0)
+        response = client.post('/showSummary', data=form)
+        assert response.status_code == 200

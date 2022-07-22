@@ -1,5 +1,4 @@
 import pytest
-from flask import Config
 from copy import deepcopy
 from gudlft import create_app
 from test.data import db
