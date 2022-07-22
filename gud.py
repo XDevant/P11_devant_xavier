@@ -1,7 +1,11 @@
+import sys
 from gudlft import create_app
 
 if __name__ == "__main__":
-    app = create_app(testing=True)
+    if "testing" in sys.argv:
+        app = create_app(testing=True)
+    else:
+        app = create_app()
     if 'PORT' in app.config.keys():
         port = app.config['PORT']
     else:

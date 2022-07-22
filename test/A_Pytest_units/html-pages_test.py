@@ -13,8 +13,8 @@ class TestPages:
         assert "<nav>" in html
         assert "</a>" in html
         if endpoint != '/ranking':
-            assert "Go to gudlft ranking page" in html
+            assert "Ranking" in html
             if endpoint != '/':
-                assert "logout" in html
+                assert "Logout" in html
         else:
-            assert "Go back to loging page" in html
+            assert "Login" in html

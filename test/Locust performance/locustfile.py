@@ -8,7 +8,7 @@ class ProjectPerfTest(HttpUser):
 
     @task
     def login(self):
-        self.client.post("/showSummary", {"email": "Iron Temple"})
+        self.client.post("/showSummary", {"email": "kate@shelifts.co.uk"})
 
     @task
     def booking(self):
@@ -18,10 +18,14 @@ class ProjectPerfTest(HttpUser):
     def purchase(self):
         form = {"competition": "Fall Classic",
                 "club": "She Lifts",
-                "places": "12",
+                "places": "1",
                 "test": "True"}
         self.client.post("/purchasePlaces", form)
 
     @task
     def ranking(self):
         self.client.get("/ranking")
+
+    @task
+    def logout(self):
+        self.client.get("/logout")

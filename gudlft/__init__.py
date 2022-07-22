@@ -3,7 +3,7 @@ from gudlft.config import BaseConfig, TestConfig
 from gudlft.filesystem import load_data
 
 
-def create_app(config_class=BaseConfig, test_config_class=TestConfig, testing=True):
+def create_app(config_class=BaseConfig, test_config_class=TestConfig, testing=False):
     app = Flask(__name__)
     if testing:
         app.config.from_object(test_config_class)

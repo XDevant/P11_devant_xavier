@@ -56,7 +56,7 @@ class TestUserStories:
         form_input.submit()
         sleep(1)
         assert selenium.current_url == 'http://localhost:8000/purchasePlaces'
-        rankings_link = selenium.find_element(By.LINK_TEXT, 'Go to gudlft ranking page')
+        rankings_link = selenium.find_element(By.LINK_TEXT, 'Ranking')
         rankings_link.click()
         sleep(1)
         assert selenium.current_url == 'http://localhost:8000/ranking'
