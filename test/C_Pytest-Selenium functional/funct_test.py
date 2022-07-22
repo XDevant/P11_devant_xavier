@@ -30,18 +30,34 @@ def selenium(request):
     service.stop()
 
 
-class TestLogin:
+class TestUserStories:
     def test_live_server(self, selenium):
         selenium.get('http://127.0.0.1:8000/')
         assert selenium.title == "GUDLFT Registration"
 
-    def test_login_page(self, app, selenium):
+    def test_user_story_1(self, app, selenium):
         selenium.get('http://localhost:8000')
         assert selenium.title == "GUDLFT Registration"
         form_input = selenium.find_element(By.CSS_SELECTOR, 'input[type="email"]')
         form_input.clear()
         form_input.send_keys("john@simplylift.co")
-        sleep(2)
+        sleep(1)
         form_input.submit()
-        sleep(2)
+        sleep(1)
         assert selenium.current_url == 'http://localhost:8000/showSummary'
+        first_link = selenium.find_element(By.CSS_SELECTOR, 'a[href="/book/Spring%20Festival/Simply%20Lift"]')
+        first_link.click()
+        sleep(1)
+        assert selenium.current_url == 'http://localhost:8000/book/Spring%20Festival/Simply%20Lift'
+        form_input = selenium.find_element(By.CSS_SELECTOR, 'input[name="places"]')
+        form_input.clear()
+        form_input.send_keys(1)
+        sleep(1)
+        form_input.submit()
+        sleep(1)
+        assert selenium.current_url == 'http://localhost:8000/purchasePlaces'
+        rankings_link = selenium.find_element(By.LINK_TEXT, 'Go to gudlft ranking page')
+        rankings_link.click()
+        sleep(1)
+        assert selenium.current_url == 'http://localhost:8000/ranking'
+
