@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, flash, url_for, current_app, Blueprint
-from gudlft.utils import shutdown_server, find_index_by_key_value, get_booking, set_booking
+from gudlft.utils import find_index_by_key_value, get_booking, set_booking
 from gudlft.filesystem import save_data
 
 
@@ -17,16 +17,11 @@ def show_summary():
     form = request.form
     if "email" in form.keys():
         club_id = find_index_by_key_value("email", form['email'], data["clubs"])
-        if club_id < 0:
-            try:
-                shutdown_server()
-            except RuntimeError:
-                raise RuntimeError("Server did not shut down")
-            return '<h1>Server shutting down...</h1>'
     else:
         club_id = find_index_by_key_value("name", form['club'], data["clubs"])
-        if club_id < 0:
-            return redirect(url_for('gudlft.index'))
+    if club_id < 0:
+        flash("Désolé, couriel non trouvé.")
+        return render_template('index.html')
     return render_template('welcome.html', club=data["clubs"][club_id], competitions=data["competitions"])
 
 
@@ -35,12 +30,12 @@ def book(competition, club):
     data = current_app.config['DB']
     club_id = find_index_by_key_value("name", club, data["clubs"])
     if club_id == -1:
-        flash("Something went wrong. Please log again")
+        flash("Session expirée, veuillez vous reconnecter")
         return render_template('index.html')
     club = data["clubs"][club_id]
     competition_id = find_index_by_key_value("name", competition, data["competitions"])
     if competition_id == -1:
-        flash("Something went wrong. Please try again")
+        flash("Ressource indisponible ou inexistante.")
         return render_template('welcome.html', club=club, competitions=data["competitions"])
     competition = data["competitions"][competition_id]
     return render_template('booking.html', club=club, competition=competition)

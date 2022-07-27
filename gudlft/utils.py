@@ -8,13 +8,6 @@ def find_index_by_key_value(key, name, list_of_dicts):
     return -1
 
 
-def shutdown_server():
-    shutdown = request.environ.get('werkzeug.server.shutdown')
-    if shutdown is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    shutdown()
-
-
 def get_booking(competition, club, db):
     if competition not in db["bookings"].keys() or club not in db["bookings"][competition].keys():
         return 0
