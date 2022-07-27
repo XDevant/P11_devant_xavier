@@ -13,7 +13,6 @@ def db():
 class TestGetSetBooking:
     def test_get_booking_missing(self, db):
         booked = utils.get_booking("bar", "foo", db)
-        print(db)
         assert booked == 0
 
     def test_set_booking_missing(self, db):

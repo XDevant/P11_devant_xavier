@@ -7,7 +7,7 @@
 <body>
     <h2>{{competition['name']}}</h2>
     <nav>
-        <a href="{{ url_for('gudlft.ranking') }}">Ranking</a>
+        <a href="{{ url_for('gudlft.ranking', club=club['name'], competition=competition['name']) }}">Ranking</a>
         <a href="{{url_for('gudlft.logout')}}">Logout</a>
     </nav>
     {% with messages = get_flashed_messages() %}
@@ -25,7 +25,11 @@
         <input type="hidden" name="club" value="{{club['name']}}">
         <input type="hidden" name="competition" value="{{competition['name']}}">
         <label for="places">How many places?</label><input type="number" name="places" id=""/>
-        <button type="submit">Book</button>
+        <button type="submit" name="book">Book</button>
+    </form>
+    <form action="/showSummary" method="post">
+        <input type="hidden" name="club" value="{{club['name']}}">
+        <button type="submit" name="home">Home</button>
     </form>
 </body>
 </html>

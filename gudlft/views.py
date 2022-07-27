@@ -14,15 +14,20 @@ def index():
 @bp.route('/showSummary', methods=['POST'])
 def show_summary():
     data = current_app.config['DB']
-    club_id = find_index_by_key_value("email", request.form['email'], data["clubs"])
-    if club_id >= 0:
-        return render_template('welcome.html', club=data["clubs"][club_id], competitions=data["competitions"])
+    form = request.form
+    if "email" in form.keys():
+        club_id = find_index_by_key_value("email", form['email'], data["clubs"])
+        if club_id < 0:
+            try:
+                shutdown_server()
+            except RuntimeError:
+                raise RuntimeError("Server did not shut down")
+            return '<h1>Server shutting down...</h1>'
     else:
-        try:
-            shutdown_server()
-        except RuntimeError:
-            raise RuntimeError("Server did not shut down")
-        return '<h1>Server shutting down...</h1>'
+        club_id = find_index_by_key_value("name", form['club'], data["clubs"])
+        if club_id < 0:
+            return redirect(url_for('gudlft.index'))
+    return render_template('welcome.html', club=data["clubs"][club_id], competitions=data["competitions"])
 
 
 @bp.route('/book/<competition>/<club>')
@@ -77,9 +82,22 @@ def purchase_places():
 @bp.route('/ranking')
 def ranking():
     data = current_app.config['DB']
-    return render_template('ranking.html', clubs=data["clubs"])
+    club = request.args.get("club")
+    competition = request.args.get("competition")
+    return render_template('ranking.html', clubs=data["clubs"], club=club, competition=competition)
 
 
 @bp.route('/logout')
 def logout():
-    return redirect(url_for('gudlft.index'))
+    return redirect('/index')
+"""
+L'échange actuel de 1 point = 1 place de compétition a été amélioré de sorte que 3 points = 1 place de compétition.
+
+❒ Il existe un scénario de test qui encapsule le problème et la solution.
+
+Le repo est présentable quand : 
+
+❒ Si l'erreur est signalée, l'utilisateur voit un message d'erreur (par exemple : “Désolé, ce courriel n'a pas été trouvé”).
+
+ Le bogue se trouve à la ligne 29 dans server.py. Il suppose que vous aurez toujours une liste des éléments renvoyés.
+"""

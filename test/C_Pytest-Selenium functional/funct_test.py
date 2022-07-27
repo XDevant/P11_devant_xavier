@@ -59,5 +59,5 @@ class TestUserStories:
         rankings_link = selenium.find_element(By.LINK_TEXT, 'Ranking')
         rankings_link.click()
         sleep(1)
-        assert selenium.current_url == 'http://localhost:8000/ranking'
+        assert selenium.current_url == 'http://localhost:8000/ranking?club=Simply+Lift'
 

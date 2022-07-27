@@ -7,25 +7,47 @@
 <body>
     <h2>GUDLFT  rankings</h2>
     <nav>
-        <a href="{{ url_for('gudlft.index') }}">Login</a>
+        {% if club %}
+        <a href="{{ url_for('gudlft.show_summary', club=club) }}">
+            Home
+        </a>
+        {% endif %}
+        {% if competition %}
+        <a href="{{ url_for('gudlft.book', club=club, competition=competition) }}">
+            Back to Booking ({{ competition }})
+        </a>
+        {% endif %}
+        <a href="{{ url_for('gudlft.index') }}">
+            {% if club %}
+            Logout
+            {% else %}
+            Login
+            {% endif %}
+        </a>
     </nav>
-    {% with messages = get_flashed_messages()%}
+    {% with messages = get_flashed_messages() %}
     {% if messages %}
         <ul>
        {% for message in messages %}
             <li>{{message}}</li>
         {% endfor %}
        </ul>
-    {% endif%}
-    {%endwith%}
+    {% endif %}
+    {% endwith %}
     <h3>Clubs:</h3>
     <ul>
-        {% for club in clubs %}
+        {% for listed_club in clubs %}
         <li>
-            {{club['name']}} Points: {{club['points']}}</br>
+            {{ listed_club['name']}} Points: {{listed_club['points'] }}</br>
         </li>
         <hr />
         {% endfor %}
     </ul>
+    {% if club %}
+    <form action="/showSummary" method="post">
+        <input type="hidden" name="club" value='{{ club }}'>
+        <button type="submit" name="home">Home</button>
+    </form>
+    {% endif %}
 </body>
 </html>
