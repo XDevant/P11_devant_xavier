@@ -21,4 +21,4 @@ class TestPages:
         elif endpoint == '/ranking':
             assert "Login" in html
         else:
-            assert '<a href="/showSummary' in html
+            assert '<button type="submit" name="home">Home</button>' in html

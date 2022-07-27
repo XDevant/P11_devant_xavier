@@ -35,12 +35,12 @@ def book(competition, club):
     data = current_app.config['DB']
     club_id = find_index_by_key_value("name", club, data["clubs"])
     if club_id == -1:
-        flash("Something went wrong-please log again")
-        return redirect('/index')
+        flash("Something went wrong. Please log again")
+        return render_template('index.html')
     club = data["clubs"][club_id]
     competition_id = find_index_by_key_value("name", competition, data["competitions"])
     if competition_id == -1:
-        flash("Something went wrong-please try again")
+        flash("Something went wrong. Please try again")
         return render_template('welcome.html', club=club, competitions=data["competitions"])
     competition = data["competitions"][competition_id]
     return render_template('booking.html', club=club, competition=competition)
@@ -89,7 +89,7 @@ def ranking():
 
 @bp.route('/logout')
 def logout():
-    return redirect('/index')
+    return redirect('/')
 """
 L'échange actuel de 1 point = 1 place de compétition a été amélioré de sorte que 3 points = 1 place de compétition.
 
@@ -99,5 +99,4 @@ Le repo est présentable quand :
 
 ❒ Si l'erreur est signalée, l'utilisateur voit un message d'erreur (par exemple : “Désolé, ce courriel n'a pas été trouvé”).
 
- Le bogue se trouve à la ligne 29 dans server.py. Il suppose que vous aurez toujours une liste des éléments renvoyés.
 """

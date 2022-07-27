@@ -1,5 +1,4 @@
 from flask import current_app
-from test.data import db as data
 from test.mocks import mock_index_return
 from gudlft import filesystem
 
@@ -30,8 +29,8 @@ class TestBookingFileSystem:
         current_app.config['DB'] = new_db
         mocker.patch('gudlft.utils.find_index_by_key_value', mock_index_return)
         response = client.get('/book/bar/fizz')
-        assert response.status_code == 302
-        assert 'redirected automatically to target URL: <a href="/index">/index</a>' in response.data.decode()
+        assert response.status_code == 200
+        assert 'Welcome to the GUDLFT Registration Portal!' in response.data.decode()
 
 
 class TestBookingIndexFinder:
@@ -48,5 +47,5 @@ class TestBookingIndexFinder:
 
     def test_booking_sad_club(self, client):
         response = client.get('/book/bar/fizz')
-        assert response.status_code == 302
-        assert 'redirected automatically to target URL: <a href="/index">/index</a>' in response.data.decode()
+        assert response.status_code == 200
+        assert 'Welcome to the GUDLFT Registration Portal!' in response.data.decode()

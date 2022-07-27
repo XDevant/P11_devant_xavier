@@ -7,11 +7,6 @@
 <body>
     <h2>GUDLFT  rankings</h2>
     <nav>
-        {% if club %}
-        <a href="{{ url_for('gudlft.show_summary', club=club) }}">
-            Home
-        </a>
-        {% endif %}
         {% if competition %}
         <a href="{{ url_for('gudlft.book', club=club, competition=competition) }}">
             Back to Booking ({{ competition }})
