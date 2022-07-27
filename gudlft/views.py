@@ -93,10 +93,4 @@ def logout():
 """
 L'échange actuel de 1 point = 1 place de compétition a été amélioré de sorte que 3 points = 1 place de compétition.
 
-❒ Il existe un scénario de test qui encapsule le problème et la solution.
-
-Le repo est présentable quand : 
-
-❒ Si l'erreur est signalée, l'utilisateur voit un message d'erreur (par exemple : “Désolé, ce courriel n'a pas été trouvé”).
-
 """

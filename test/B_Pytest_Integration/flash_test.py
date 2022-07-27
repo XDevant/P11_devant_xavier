@@ -12,3 +12,9 @@ class TestFlashErrorMessages:
         response = client.get('/book/bar/fizz')
         assert response.status_code == 200
         assert 'Something went wrong. Please log again' in response.data.decode()
+
+    def test_login_sad_email(self, client):
+        form = {'email': 'foo@bar.co'}
+        response = client.post('/showSummary', data=form)
+        assert response.status_code == 200
+        assert 'Email not found. Please log again' in response.data.decode()
