@@ -29,23 +29,24 @@
 
     - Next, type <code>source bin/activate</code>. You should see that your command prompt has changed to the name of the folder. This means that you can install packages in here without affecting affecting files outside. To deactivate, type <code>deactivate</code>
 
-    - Rather than hunting around for the packages you need, you can install in one step. Type <code>pip install -r requirements.txt</code>. This will install all the packages listed in the respective file. If you install a package, make sure others know by updating the requirements.txt file. An easy way to do this is <code>pip freeze > requirements.txt</code>
+    - Rather than hunting around for the packages you need, you can install in one step. Type <code>pip install -r requirements.txt</code>. This will install all the packages listed in the respective file.
 
-    - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
+    - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be gudlft: <code> $env:FLASK_APP = "gudlft" </code>.
 
-    - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+    - You should now be ready to test the application. In the directory, type either <code>python gud.py</code>  (test mode) or <code>python gud.py real</code> (any purchase will be saved in db). The app should respond with an address you should be able to go to using your browser.
 
 4. Current Setup
 
-    The app is powered by [JSON files](https://www.tutorialspoint.com/json/json_quick_guide.htm). This is to get around having a DB until we actually need one. The main ones are:
+    The app is powered by [JSON files] in the gudlft/JSON directory. In testing however the files in test/JSON will be used by Selenium and Locus. Pytest will use a fake db stored in test/data.py. During all testing, subsequent save/load operations will use the test/Temp directory to keep the test db intact. Restart the test server to reinit it.  
      
     * competitions.json - list of competitions
     * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
+    * bookings.json - dictionary of competitions. Values are lists of dicts with a club as key and the number of places booked in the competition by this club
 
 5. Testing
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+   For running both test commands successfully, you first need to start a test server via <code>python gud.py</code>. Otherwise the 2 test using selenium will fail (they look for port 8000) and locust will wreck the db.
 
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+    * Pytest : <code>pytest -sv --basetemp=test\Temp</code>
+    * locust: <code>locust -f "test/Locust performance/locustfile.py"</code>
 
