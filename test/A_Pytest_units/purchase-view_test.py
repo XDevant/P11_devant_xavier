@@ -1,14 +1,11 @@
 import pytest
 from flask import current_app
-from copy import deepcopy
-from test.data import db as test_data
 from test.mocks import mock_index_return
-import gudlft
 
 
 @pytest.fixture
 def form():
-    form = {"competition": "bar", "club": "foo", "places": "8"}
+    form = {"competition": "bar", "club": "foo", "places": "3"}
     return form
 
 
@@ -20,12 +17,13 @@ class TestPurchaseView:
         mocker.patch('gudlft.utils.set_booking')
         with app.app_context():
             db = current_app.config['DB']
+            assert int(db["competitions"][0]['numberOfPlaces']) == 20
         response = client.post('/purchasePlaces', data=form)
         assert response.status_code == 200
-        assert int(db["competitions"][0]['numberOfPlaces']) == 12
-        assert int(db["clubs"][0]["points"]) == 5
+        assert int(db["competitions"][0]['numberOfPlaces']) == 17
+        assert int(db["clubs"][0]["points"]) == 4
 
-    @pytest.mark.parametrize("points, places", [(7, 9), (9, 7)])
+    @pytest.mark.parametrize("points, places", [(7, 9), (9, 2)])
     def test_purchase_sad_not_enough(self, app, client, mocker, points, places, form):
         with app.app_context():
             db = current_app.config['DB']
@@ -47,22 +45,22 @@ class TestPurchaseView:
         mocker.patch('gudlft.utils.find_index_by_key_value', mock_index_return)
         mocker.patch('gudlft.utils.get_booking', return_value=0)
         mocker.patch('gudlft.utils.set_booking')
-        response = client.post('/purchasePlaces', data=form)
         with app.app_context():
             db = current_app.config['DB']
+        db["clubs"][0]["points"] = 39
+        response = client.post('/purchasePlaces', data=form)
         assert response.status_code == 200
         assert int(db["competitions"][0]['numberOfPlaces']) == 20
-        assert int(db["clubs"][0]["points"]) == 13
+        assert int(db["clubs"][0]["points"]) == 39
 
     def test_purchase_sad_previous_too_high(self, app, client, mocker, form):
         mocker.patch('gudlft.filesystem.save_data')
         mocker.patch('gudlft.utils.find_index_by_key_value', mock_index_return)
-        mocker.patch('gudlft.utils.get_booking', return_value=8)
-        mocker.patch('gudlft.utils.set_booking')
         with app.app_context():
             db = current_app.config['DB']
-        db["bookings"][form["competition"]] = {form["club"]: form["places"]}
+        assert int(db["clubs"][0]["points"]) == 13
         assert int(db["competitions"][0]['numberOfPlaces']) == 20
+        db["bookings"][form["competition"]] = {form["club"]: 10}
         response = client.post('/purchasePlaces', data=form)
         assert response.status_code == 200
         assert int(db["clubs"][0]["points"]) == 13

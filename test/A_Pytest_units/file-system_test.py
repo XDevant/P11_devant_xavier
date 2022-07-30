@@ -44,4 +44,3 @@ class TestFileSystem:
             filesystem.save_to_file("bookings", db["bookings"])
             path = current_app.config['DATABASE']
         assert path == './test/Temp'
-        # assert len(list(tmp_path.iterdir())) == 2

@@ -29,7 +29,10 @@ def load_data(path=None):
 
 
 def save_to_file(name, table):
-    path = current_app.config['DATABASE'] + '/'
+    try:
+        path = current_app.config['DATABASE'] + '/'
+    except Exception:
+        path = './test/Temp/'
     with open(path + name + '.json', 'w') as c:
         json.dump({name: table}, c, indent=4)
         return True

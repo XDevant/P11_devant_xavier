@@ -1,8 +1,8 @@
-from flask import render_template, request, redirect, flash, url_for, current_app, Blueprint
+from flask import render_template, request, redirect, flash, current_app, Blueprint
 from gudlft.utils import find_index_by_key_value, get_booking, set_booking
 from gudlft.filesystem import save_data
 
-
+PLACE_COST = 3
 bp = Blueprint('gudlft', __name__, url_prefix='')
 
 
@@ -55,15 +55,16 @@ def purchase_places():
     already_ordered = get_booking(competition_name, club_name, data)
 
     if places_required < 0:
-        flash(f'You can only book a positive number of places!')
+        flash(f'Pour désinscrire des participants, contactez notre équipe!')
     elif places_required + already_ordered > 12:
-        flash(f'You can not buy more than 12 places! You previously bought {already_ordered}')
+        flash(f'Vous ne pouvez pas réserver plus de 12 places! vous en avez déjà {already_ordered}')
     elif places_available < places_required:
-        flash(f'Only {places_available} places left, you asked {places_required}!')
-    elif int(club["points"]) < places_required:
-        flash(f'You have {club["points"]} points left, you asked {places_required} places!')
+        flash(f'Plus que {places_available} places disponibles, vous en réservez {places_required}!')
+    elif int(club["points"]) < places_required * PLACE_COST:
+        flash(f"Vous n'avez que {club['points']} points, vous demandez {places_required} places!")
+        flash(f"Rappel: chaque réservation coûte 3 point")
     else:
-        club["points"] = int(club["points"]) - places_required
+        club["points"] = int(club["points"]) - places_required * PLACE_COST
         data["clubs"][club_id] = club
         competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
         data["competitions"][competition_id] = competition
@@ -84,8 +85,4 @@ def ranking():
 
 @bp.route('/logout')
 def logout():
-    return redirect('/')
-"""
-L'échange actuel de 1 point = 1 place de compétition a été amélioré de sorte que 3 points = 1 place de compétition.
-
-"""
+    return render_template('index.html')

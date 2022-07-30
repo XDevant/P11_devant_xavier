@@ -1,5 +1,4 @@
 from test.data import db as data
-import gudlft
 
 
 class TestHomeView:

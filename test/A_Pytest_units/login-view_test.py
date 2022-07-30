@@ -5,7 +5,7 @@ class TestLoginView:
 
     def test_logout_status_code_ok(self, client):
         response = client.get('/logout')
-        assert response.status_code == 302
+        assert response.status_code == 200
 
     def test_login_form_has_input_submit(self, client):
         response = client.get('/')

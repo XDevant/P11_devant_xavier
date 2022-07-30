@@ -1,5 +1,3 @@
-import pytest
-
 
 class TestFlashErrorMessages:
     """Test messages sent back when data not found"""

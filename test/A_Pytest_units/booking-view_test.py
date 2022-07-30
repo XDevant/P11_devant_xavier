@@ -1,6 +1,4 @@
-from test.data import db as test_data
 from test.mocks import mock_index_return
-import gudlft
 
 
 class TestBookingView:
