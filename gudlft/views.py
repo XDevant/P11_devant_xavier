@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, flash, current_app, Blueprint
+from flask import render_template, request, flash, current_app, Blueprint
 from gudlft.utils import find_index_by_key_value, get_booking, set_booking
 from gudlft.filesystem import save_data
 

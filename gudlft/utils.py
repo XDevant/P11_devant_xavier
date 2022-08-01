@@ -1,6 +1,3 @@
-from flask import request
-
-
 def find_index_by_key_value(key, name, list_of_dicts):
     for i in range(len(list_of_dicts)):
         if list_of_dicts[i][key] == name:
